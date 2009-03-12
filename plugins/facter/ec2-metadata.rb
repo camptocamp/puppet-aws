@@ -7,14 +7,6 @@
 require 'open-uri'
 require 'timeout'
 
-def can_connect?(ip,port,wait_sec=2)
- Timeout::timeout(wait_sec) {open(ip, port)}
- return true
-rescue
-  return false
-end
-
-
 def metadata(id = "")
   open("http://169.254.169.254/2008-02-01/meta-data/#{id||=''}").read.
     split("\n").each do |o|
@@ -31,8 +23,8 @@ def metadata(id = "")
   end
 end
 
-if can_connect?("169.254.169.254",80)
-  metadata
+begin
+  Timeout::timeout(2) { metadata }
 else
-puts "ec2-metadata not loaded"
+  puts "ec2-metadata not loaded"
 end
