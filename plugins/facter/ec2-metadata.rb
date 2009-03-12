@@ -25,6 +25,6 @@ end
 
 begin
   Timeout::timeout(2) { metadata }
-else
+rescue
   puts "ec2-metadata not loaded"
 end
