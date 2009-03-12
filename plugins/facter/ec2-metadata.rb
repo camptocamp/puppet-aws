@@ -29,10 +29,16 @@ def metadata(id = "")
       metadata(key)
     end
   end
+rescue
+  puts "ec2-metadata not loaded"
 end
 
 if can_connect?("169.254.169.254",80)
-  metadata
+  begin
+    Timeout::timeout(2) { metadata }
+  rescue
+    puts "ec2-metadata timed out"
+  end
 else
-puts "ec2-metadata not loaded"
+  puts "ec2-metadata not loaded"
 end
