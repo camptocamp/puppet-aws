@@ -3,6 +3,9 @@
 # 27.02.09 KurtBe
 # Added a can_connect? function so that this fact can safely be distributed to non-ec2 instances
 # otherwise the script hangs if the amazon-ip is not reachable
+# 12.03.09 Francois Deppierraz
+# Fixed the timeout handling code because which was not actually working. A
+# file named "169.254.169.254" was created instead.
 
 require 'open-uri'
 require 'timeout'
