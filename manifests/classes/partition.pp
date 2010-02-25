@@ -38,7 +38,7 @@ class aws::partition {
       }
     }
 
-    "m1.xlarge" : {
+    "m1.xlarge", "c1.xlarge" : {
       
       file {["/mnt","/mnt2", "/mnt3", "/mnt4"]:
         ensure => directory,
