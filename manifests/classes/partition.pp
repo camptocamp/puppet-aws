@@ -1,6 +1,6 @@
 class aws::partition {
   case $ec2_instance_type {
-    "m1.small" : {
+    "m1.small", "m2.2xlarge" : {
     
       file {"/mnt":
         ensure => directory,
