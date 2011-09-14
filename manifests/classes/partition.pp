@@ -1,4 +1,10 @@
 class aws::partition {
+
+  $fstype = $lsbdistcodename ? {
+    'squeeze' => 'ext4',
+    default   => 'ext3',
+  }
+
   case $ec2_instance_type {
     "m1.small", "m2.2xlarge" : {
     
@@ -8,12 +14,9 @@ class aws::partition {
       }
 
       mount {"/mnt":
-        ensure => mounted,
-        device => "/dev/${ec2_block_device_mapping_ephemeral0}",
-        fstype => $lsbdistcodename? {
-          "squeeze" => "ext4",
-          default   => "ext3",
-        },
+        ensure  => mounted,
+        device  => "/dev/${ec2_block_device_mapping_ephemeral0}",
+        fstype  => $fstype,
         options => "defaults",
         require => File["/mnt"],
       }
@@ -27,23 +30,17 @@ class aws::partition {
       }
 
       mount {"/mnt":
-        ensure => mounted,
-        device => "/dev/${ec2_block_device_mapping_ephemeral0}",
-        fstype => $lsbdistcodename? {
-          "squeeze" => "ext4",
-          default   => "ext3",
-        },
+        ensure  => mounted,
+        device  => "/dev/${ec2_block_device_mapping_ephemeral0}",
+        fstype  => $fstype,
         options => "defaults",
         require => File["/mnt"],
       }
 
       mount {"/mnt2":
-        ensure => mounted,
-        device => "/dev/${ec2_block_device_mapping_ephemeral1}",
-        fstype => $lsbdistcodename? {
-          "squeeze" => "ext4",
-          default   => "ext3",
-        },
+        ensure  => mounted,
+        device  => "/dev/${ec2_block_device_mapping_ephemeral1}",
+        fstype  => $fstype,
         options => "defaults",
         require => File["/mnt2"],
       }
@@ -57,45 +54,33 @@ class aws::partition {
       }
 
       mount {"/mnt":
-        ensure => mounted,
-        device => "/dev/${ec2_block_device_mapping_ephemeral0}",
-        fstype => $lsbdistcodename? {
-          "squeeze" => "ext4",
-          default   => "ext3",
-        },
+        ensure  => mounted,
+        device  => "/dev/${ec2_block_device_mapping_ephemeral0}",
+        fstype  => $fstype,
         options => "defaults",
         require => File["/mnt"],
       }
 
       mount {"/mnt2":
-        ensure => mounted,
-        device => "/dev/${ec2_block_device_mapping_ephemeral1}",
-        fstype => $lsbdistcodename? {
-          "squeeze" => "ext4",
-          default   => "ext3",
-        },
+        ensure  => mounted,
+        device  => "/dev/${ec2_block_device_mapping_ephemeral1}",
+        fstype  => $fstype,
         options => "defaults",
         require => File["/mnt2"],
       }
      
       mount {"/mnt3":
-        ensure => mounted,
-        device => "/dev/${ec2_block_device_mapping_ephemeral2}",
-        fstype => $lsbdistcodename? {
-          "squeeze" => "ext4",
-          default   => "ext3",
-        },
+        ensure  => mounted,
+        device  => "/dev/${ec2_block_device_mapping_ephemeral2}",
+        fstype  => $fstype,
         options => "defaults",   
         require => File["/mnt3"],
       }
 
       mount {"/mnt4":
-        ensure => mounted,
-        device => "/dev/${ec2_block_device_mapping_ephemeral3}",
-        fstype => $lsbdistcodename? {
-          "squeeze" => "ext4",
-          default   => "ext3",
-        },
+        ensure  => mounted,
+        device  => "/dev/${ec2_block_device_mapping_ephemeral3}",
+        fstype  => $fstype,
         options => "defaults",   
         require => File["/mnt4"],
       }
