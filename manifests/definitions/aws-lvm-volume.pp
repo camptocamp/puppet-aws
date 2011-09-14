@@ -1,3 +1,35 @@
+/*
+
+== Definition: aws::lvm-volume
+
+A simple wrapper to easily create LVM volumes based on the aggregation of 
+the EC2 ephemeral storages.
+
+Parameters:
+- *name*: LogicalVolumeName (see option -n of lvcreate)
+- *ensure*: present/absent, defaults to present.
+- *size*: LogicalVolumeSize (see option -L of lvcreate)
+- *fstype*: file system, defaults to ext4
+- *mountpath*: a directory to mount the LogicalVolume
+- *$mountpath_owner*: owner directory
+- *mountpath_group*: group directory
+- *mountpath_mode*: mode directory
+- *pass*: The pass in which the mount is checked
+- *dump*: Whether to dump the mount
+
+Example usage:
+  
+  aws::lvm-volume {
+    'backups': size => '10G', mountpath => '/var/backups'; 
+    'vhosts':  size => '40G', mountpath => '/var/www/vhosts';
+  }
+
+Safety limitations:
+  
+Specifying "ensure => absent", only unmount and drop the logical volume.
+Logical volume size can be extended, but not reduced (see README file of the puppet-lvm module)
+
+*/
 define aws::lvm-volume(
   $ensure=present,
   $size,
@@ -9,6 +41,10 @@ define aws::lvm-volume(
   $mountpath_mode=755,
   $pass=2,
   $dump=1) {
+
+  Physical_volume {
+    require => [Package['lvm2'], Mount['/mnt']]
+  }
 
   if !defined(Package['lvm2']) {
     package{'lvm2':
@@ -31,7 +67,6 @@ define aws::lvm-volume(
       if !defined(Physical_volume[$empheral0]) {
         physical_volume { $empheral0:
           ensure  => present,
-          require => [Package['lvm2'], Mount['/mnt']],
         }
       }
       
@@ -53,7 +88,6 @@ define aws::lvm-volume(
       if !defined(Physical_volume[$empheral0]) {
         physical_volume { $empheral0:
           ensure  => present,
-          require => [Package['lvm2'], Mount['/mnt']],
         }
       }
  
@@ -67,7 +101,6 @@ define aws::lvm-volume(
         volume_group { $vg:
           ensure => present,
           physical_volumes => [$empheral0,$empheral1],
-          require => [Physical_volume[$empheral0],Physical_volume[$empheral1]]
         }
       }
 
@@ -82,21 +115,18 @@ define aws::lvm-volume(
       if !defined(Physical_volume[$empheral0]) {
         physical_volume { $empheral0:
           ensure  => present,
-          require => [Package['lvm2'], Mount['/mnt']],
         }
       } 
 
       if !defined(Physical_volume[$empheral1]) {
         physical_volume { $empheral1:
           ensure  => present,
-          require => [Package['lvm2'], Mount['/mnt']],
         }
       } 
 
       if !defined(Physical_volume[$empheral2]) {
         physical_volume { $empheral2:
           ensure  => present,
-          require => [Package['lvm2'], Mount['/mnt']],
         }
       }
       
@@ -118,15 +148,22 @@ define aws::lvm-volume(
   }
    
   logical_volume { $name:
-    ensure       => present,
+    ensure       => $ensure,
     volume_group => $vg,
     size         => $size,
-    require      => Volume_group[$vg],
+    require      => $ensure ? {
+      present => Volume_group[$vg],
+      absent  => Mount[$mountpath],
+    },
   }
 
   filesystem { "/dev/${vg}/${name}":
     ensure  => $ensure,
-    require => Logical_volume[$name],
+    fs_type => $fstype,
+    require => $ensure ? { 
+      present => Logical_volume[$name],
+      absent => undef,
+    }
   }
 
   if !defined(File[$mountpath]){
@@ -140,7 +177,10 @@ define aws::lvm-volume(
 
   mount { $mountpath:
     device  => "/dev/mapper/${vg}-${name}",
-    ensure  => mounted,
+    ensure  => $ensure ? {
+      present => mounted,
+      default => absent,
+    },
     fstype  => $fstype,
     options => 'defaults',
     pass    => $pass,
