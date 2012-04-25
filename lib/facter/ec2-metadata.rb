@@ -29,5 +29,7 @@ end
 begin
   Timeout::timeout(1) { metadata }
 rescue Timeout::Error
-  puts "ec2-metadata not loaded"
+  puts "ec2-metadata not loaded - timeout"
+rescue Errno::ENETUNREACH
+  puts "ec2-metadata not loaded - network unreachable"
 end
