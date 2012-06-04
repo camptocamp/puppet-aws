@@ -83,7 +83,7 @@ define aws::lvm-volume(
 
     }
 
-    'm1.large' : {
+    'm1.large', 'm2.xlarge' : {
      
       $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
