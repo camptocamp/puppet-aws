@@ -59,8 +59,10 @@ define aws::lvm-volume(
   }
 
   case $ec2_instance_type {
+    # Cf http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/instance-types.html?r=2844
     
-    'm1.small','m2.2xlarge' : {
+    # One ephemeral device
+    'm1.small', 'c1.medium', 'm2.xlarge', 'm2.2xlarge' : {
       
       $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
@@ -83,7 +85,8 @@ define aws::lvm-volume(
 
     }
 
-    'm1.large', 'm2.xlarge' : {
+    # Two ephemeral devices
+    'm1.large', 'm2.4xlarge', 'cc1.4xlarge', 'cg1.4xlarge' : {
      
       $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
@@ -116,7 +119,8 @@ define aws::lvm-volume(
 
     }
 
-    'm1.xlarge', 'c1.xlarge' : {
+    # Four ephemeral devices
+    'm1.xlarge', 'c1.xlarge', 'c2.8xlarge' : {
  
       $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
