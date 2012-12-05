@@ -2,7 +2,7 @@
 
 == Definition: aws::lvm-volume
 
-A simple wrapper to easily create LVM volumes based on the aggregation of 
+A simple wrapper to easily create LVM volumes based on the aggregation of
 the EC2 ephemeral storages.
 
 Parameters:
@@ -18,24 +18,25 @@ Parameters:
 - *dump*: Whether to dump the mount
 
 Example usage:
-  
+
   aws::lvm-volume {
-    'backups': size => '10G', mountpath => '/var/backups'; 
+    'backups': size => '10G', mountpath => '/var/backups';
     'vhosts':  size => '40G', mountpath => '/var/www/vhosts';
   }
 
 Safety limitations:
-  
+
 Specifying "ensure => absent", only unmount and drop the logical volume.
-Logical volume size can be extended, but not reduced (see README file of the puppet-lvm module)
+Logical volume size can be extended, but not reduced (see README file of the
+puppet-lvm module)
 
 */
 define aws::lvm-volume(
-  $ensure=present,
   $size,
+  $mountpath,
+  $ensure=present,
   $vg='vg0',
   $fstype='ext4',
-  $mountpath,
   $mountpath_owner=root,
   $mountpath_group=root,
   $mountpath_mode=755,
@@ -52,18 +53,18 @@ define aws::lvm-volume(
     }
   }
 
-  if !defined(Mount['/mnt']) { 
-    mount {'/mnt': 
+  if !defined(Mount['/mnt']) {
+    mount {'/mnt':
       ensure => absent,
     }
   }
 
   case $ec2_instance_type {
     # Cf http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/instance-types.html?r=2844
-    
+
     # One ephemeral device
     'm1.small', 'c1.medium', 'm2.xlarge', 'm2.2xlarge' : {
-      
+
       $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
         default => "/dev/${ec2_block_device_mapping_ephemeral0}"
@@ -74,12 +75,12 @@ define aws::lvm-volume(
           ensure  => present,
         }
       }
-      
+
       if !defined(Volume_group[$vg]){
         volume_group { $vg:
-          ensure => present,
+          ensure           => present,
           physical_volumes => $empheral0,
-          require => Physical_volume[$empheral0],
+          require          => Physical_volume[$empheral0],
         }
       }
 
@@ -87,7 +88,7 @@ define aws::lvm-volume(
 
     # Two ephemeral devices
     'm1.large', 'm2.4xlarge', 'cc1.4xlarge', 'cg1.4xlarge' : {
-     
+
       $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
         default => "/dev/${ec2_block_device_mapping_ephemeral0}"
@@ -103,16 +104,16 @@ define aws::lvm-volume(
           ensure  => present,
         }
       }
- 
+
       if !defined(Physical_volume[$empheral1]) {
         physical_volume { $empheral1:
           ensure => present
         }
       }
-      
+
       if !defined(Volume_group[$vg]){
         volume_group { $vg:
-          ensure => present,
+          ensure           => present,
           physical_volumes => [$empheral0,$empheral1],
         }
       }
@@ -121,12 +122,12 @@ define aws::lvm-volume(
 
     # Four ephemeral devices
     'm1.xlarge', 'c1.xlarge', 'c2.8xlarge' : {
- 
+
       $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
         default => "/dev/${ec2_block_device_mapping_ephemeral0}"
       }
-     
+
       $empheral1 = $ec2_block_device_mapping_ephemeral1 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral1'),
         default => "/dev/${ec2_block_device_mapping_ephemeral1}"
@@ -141,25 +142,25 @@ define aws::lvm-volume(
         physical_volume { $empheral0:
           ensure  => present,
         }
-      } 
+      }
 
       if !defined(Physical_volume[$empheral1]) {
         physical_volume { $empheral1:
           ensure  => present,
         }
-      } 
+      }
 
       if !defined(Physical_volume[$empheral2]) {
         physical_volume { $empheral2:
           ensure  => present,
         }
       }
-      
+
       if !defined(Volume_group[$vg]){
         volume_group { $vg:
-          ensure => present,
+          ensure           => present,
           physical_volumes => [$empheral0,$empheral1,$empheral2],
-          require => [
+          require          => [
             Physical_volume[$empheral0],
             Physical_volume[$empheral1],
             Physical_volume[$empheral2],
@@ -171,7 +172,7 @@ define aws::lvm-volume(
     default : { fail 'Unknown ec2 instance type' }
 
   }
-   
+
   logical_volume { $name:
     ensure       => $ensure,
     volume_group => $vg,
@@ -183,11 +184,11 @@ define aws::lvm-volume(
   }
 
   filesystem { "/dev/${vg}/${name}":
-    ensure  => $ensure,
-    fs_type => $fstype,
-    require => $ensure ? { 
+    ensure    => $ensure,
+    fs_type   => $fstype,
+    require   => $ensure ? {
       present => Logical_volume[$name],
-      absent => undef,
+      absent  => undef,
     }
   }
 
@@ -198,14 +199,14 @@ define aws::lvm-volume(
       group  => $mountpath_group,
       mode   => $mountpath_mode,
     }
-  } 
+  }
 
   mount { $mountpath:
-    device  => "/dev/mapper/${vg}-${name}",
     ensure  => $ensure ? {
       present => mounted,
       default => absent,
     },
+    device  => "/dev/mapper/${vg}-${name}",
     fstype  => $fstype,
     options => 'defaults',
     pass    => $pass,
