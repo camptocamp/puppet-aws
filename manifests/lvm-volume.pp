@@ -65,9 +65,9 @@ define aws::lvm-volume(
     # One ephemeral device
     'm1.small', 'c1.medium', 'm2.xlarge', 'm2.2xlarge' : {
 
-      $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
+      $empheral0 = $::ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
-        default => "/dev/${ec2_block_device_mapping_ephemeral0}"
+        default => "/dev/${::ec2_block_device_mapping_ephemeral0}"
       }
 
       if !defined(Physical_volume[$empheral0]) {
@@ -89,14 +89,14 @@ define aws::lvm-volume(
     # Two ephemeral devices
     'm1.large', 'm2.4xlarge', 'cc1.4xlarge', 'cg1.4xlarge' : {
 
-      $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
+      $empheral0 = $::ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
-        default => "/dev/${ec2_block_device_mapping_ephemeral0}"
+        default => "/dev/${::ec2_block_device_mapping_ephemeral0}"
       }
 
       $empheral1 = $ec2_block_device_mapping_ephemeral1 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral1'),
-        default => "/dev/${ec2_block_device_mapping_ephemeral1}"
+        default => "/dev/${::ec2_block_device_mapping_ephemeral1}"
       }
 
       if !defined(Physical_volume[$empheral0]) {
@@ -123,19 +123,19 @@ define aws::lvm-volume(
     # Four ephemeral devices
     'm1.xlarge', 'c1.xlarge', 'c2.8xlarge' : {
 
-      $empheral0 = $ec2_block_device_mapping_ephemeral0 ? {
+      $empheral0 = $::ec2_block_device_mapping_ephemeral0 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral0'),
-        default => "/dev/${ec2_block_device_mapping_ephemeral0}"
+        default => "/dev/${::ec2_block_device_mapping_ephemeral0}"
       }
 
-      $empheral1 = $ec2_block_device_mapping_ephemeral1 ? {
+      $empheral1 = $::ec2_block_device_mapping_ephemeral1 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral1'),
-        default => "/dev/${ec2_block_device_mapping_ephemeral1}"
+        default => "/dev/${::ec2_block_device_mapping_ephemeral1}"
       }
 
-      $empheral2 = $ec2_block_device_mapping_ephemeral2 ? {
+      $empheral2 = $::ec2_block_device_mapping_ephemeral2 ? {
         ''      => fail('unknown value for fact ec2_block_device_mapping_ephemeral2'),
-        default => "/dev/${ec2_block_device_mapping_ephemeral2}"
+        default => "/dev/${::ec2_block_device_mapping_ephemeral2}"
       }
 
       if !defined(Physical_volume[$empheral0]) {
