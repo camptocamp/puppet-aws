@@ -1,6 +1,6 @@
 class aws::partition {
 
-  if defined('$::ec2_instance_type') {
+  if defined('$ec2_instance_type') {
     $fstype = $::lsbdistcodename ? {
       'squeeze' => 'ext4',
       default   => 'ext3',
