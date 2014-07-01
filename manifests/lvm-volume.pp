@@ -59,7 +59,7 @@ define aws::lvm-volume(
     }
   }
 
-  case $ec2_instance_type {
+  case $::ec2_instance_type {
     # Cf http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/instance-types.html?r=2844
 
     # One ephemeral device
