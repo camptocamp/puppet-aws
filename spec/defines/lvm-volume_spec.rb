@@ -10,7 +10,7 @@ describe 'aws::lvm-volume' do
 
   context 'when no parameters are passed' do
     it 'should fail' do
-      expect { should compile }.to raise_error(Puppet::Error, /Must pass/)
+      expect { should compile }.to raise_error(/Must pass/)
     end
   end
 
