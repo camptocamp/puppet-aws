@@ -1,0 +1,38 @@
+{
+  "name": "camptocamp-aws",
+  "version": "1.0.0",
+  "author": "Camptocamp",
+  "summary": "Puppet AWS module",
+  "license": "Apache-2.0",
+  "source": "https://github.com/camptocamp/puppet-aws",
+  "project_page": "https://github.com/camptocamp/puppet-aws",
+  "issues_url": "https://github.com/camptocamp/puppet-aws/issues",
+  "dependencies": [
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": "3.x"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6",
+        "7"
+      ]
+    }
+  ],
+  "puppet_version": [
+    "3.7"
+  ]
+}
