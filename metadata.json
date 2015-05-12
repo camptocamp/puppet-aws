@@ -1,6 +1,6 @@
 {
   "name": "camptocamp-aws",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Camptocamp",
   "summary": "Puppet AWS module",
   "license": "Apache-2.0",
