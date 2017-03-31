@@ -89,7 +89,7 @@ class aws::partition {
       }
 
       default: {
-        fail "Unknown EC2 instance type : ${::ec2_instance_type }"
+        fail "Unknown EC2 instance type : ${::ec2_instance_type} "
       }
     }
   }
